@@ -1,0 +1,56 @@
+package main
+
+import (
+	"adventOfCode/lib"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+func main() {
+	data, err := lib.GetInput()
+	if err != nil {
+		lib.ErrorOut(err)
+	}
+	lines := strings.Split(string(data), "\n")
+	var total int
+	for i, line := range lines {
+		if i+1 == len(lines) {
+			break
+		}
+		dimensions := strings.Split(line, "x")
+		if len(dimensions) != 3 {
+			lib.ErrorOut(fmt.Errorf("bad input on line %d: '%s'", i, line))
+		}
+		var shortest, volume int
+		for edge1 := range dimensions {
+			x, err := strconv.Atoi(dimensions[edge1])
+			if err != nil {
+				lib.ErrorOut(fmt.Errorf("bad input on line %d: '%s': %v", i, line, err))
+			}
+			if edge1 == 0 {
+				volume = x
+			}
+			for edge2 := range dimensions[edge1+1:] {
+				y, err := strconv.Atoi(dimensions[edge1+edge2+1])
+				if err != nil {
+					lib.ErrorOut(fmt.Errorf("bad input on line %d: '%s': %v", i, line, err))
+				}
+				if edge1 == 0 {
+					volume *= y
+				}
+				perimeter := (x + y) * 2
+				switch {
+				case shortest == 0:
+					shortest = perimeter
+				case perimeter < shortest:
+					shortest = perimeter
+				}
+			}
+		}
+		total += shortest + volume
+	}
+	fmt.Printf("%d\n", total)
+	os.Exit(0)
+}
