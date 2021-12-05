@@ -88,12 +88,18 @@ func main() {
 	var score int
 Draw:
 	for _, draw := range draws {
+		var losers []board
 		for b := range boards {
 			score = boards[b].mark(draw) * draw
 			if score > 0 {
-				break Draw
+				if len(boards) == 1 {
+					break Draw
+				}
+			} else {
+				losers = append(losers, boards[b])
 			}
 		}
+		boards = losers
 	}
 	fmt.Printf("%d\n", score)
 	os.Exit(0)
