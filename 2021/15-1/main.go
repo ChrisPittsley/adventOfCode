@@ -60,6 +60,7 @@ func main() {
 			end = p
 		}
 	}
+	var queue = make(map[coordinates]struct{})
 	start := cavern[cur]
 	start.totalCost = 0
 	cavern[cur] = start
@@ -81,10 +82,12 @@ func main() {
 				nbr.totalCost = cavern[cur].totalCost + nbr.cost
 			}
 			cavern[n] = nbr
+			queue[n] = struct{}{}
 		}
+		delete(queue, cur)
 		delete(unvisited, cur)
 		min := -1
-		for next := range unvisited {
+		for next := range queue {
 			if n, ok := cavern[next]; !ok || n.totalCost == -1 {
 				continue
 			} else if n.totalCost < min || min == -1 {
